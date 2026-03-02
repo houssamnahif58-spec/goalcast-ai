@@ -1,39 +1,22 @@
-<script>
-async function calculate(){
-
-    let a_goals = parseFloat(document.getElementById("a_goals").value);
-    let b_goals = parseFloat(document.getElementById("b_goals").value);
-    let a_def = parseFloat(document.getElementById("a_def").value);
-    let b_def = parseFloat(document.getElementById("b_def").value);
-
-    if(isNaN(a_goals) || isNaN(b_goals) || isNaN(a_def) || isNaN(b_def)){
-        alert("Please fill all fields");
-        return;
-    }
-
-    try {
-
-        const response = await fetch("/api/predict", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                a_goals,
-                b_goals,
-                a_def,
-                b_def
-            })
-        });
-
-        const data = await response.json();
-
-        document.getElementById("prediction").innerText = "Prediction: " + data.prediction;
-        document.getElementById("confidence").innerText = "Confidence: " + data.confidence + "%";
-        document.getElementById("result").classList.remove("hidden");
-
-    } catch (error) {
-        alert("Server error");
-    }
-}
-</script>
+fetch("/api/predict", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    a_goals: parseFloat(document.getElementById("a_goals").value),
+    b_goals: parseFloat(document.getElementById("b_goals").value),
+    a_def: parseFloat(document.getElementById("a_def").value),
+    b_def: parseFloat(document.getElementById("b_def").value)
+  })
+})
+.then(res => res.json())
+.then(data => {
+  document.getElementById("result").innerHTML =
+    "Prediction: " + data.prediction +
+    "<br>Confidence: " + data.confidence + "%";
+})
+.catch(err => {
+  document.getElementById("result").innerHTML =
+    "Error connecting to server";
+});
