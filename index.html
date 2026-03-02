@@ -1,116 +1,6 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoalCast AI - Advanced Analysis</title>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0f172a;
-    color:white;
-    text-align:center;
-}
-header{
-    background:#111827;
-    padding:20px;
-}
-h1{
-    color:#22c55e;
-}
-.container{
-    padding:20px;
-}
-.card{
-    background:#1e293b;
-    padding:20px;
-    margin:20px auto;
-    border-radius:12px;
-    max-width:600px;
-}
-button{
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin-top:10px;
-}
-.vip{
-    background:#22c55e;
-    color:black;
-}
-input{
-    padding:8px;
-    margin:5px;
-    border-radius:6px;
-    border:none;
-}
-.hidden{
-    display:none;
-}
-</style>
-</head>
-
-<body>
-
-<header>
-<h1>GoalCast AI</h1>
-<p>Advanced Football Prediction Platform</p>
-</header>
-
-<div class="container">
-
-<!-- 1️⃣ Static Expert Analysis -->
-<div class="card">
-<h2>🔥 Expert Analysis</h2>
-<p>Manchester City vs Liverpool</p>
-<p>Form: City (WWWWW) | Liverpool (WLWWW)</p>
-<p>Avg Goals: 2.8 vs 2.1</p>
-<p>Prediction: Over 2.5 Goals ✅</p>
-<p>Confidence: 87%</p>
-</div>
-
-<!-- 2️⃣ Smart AI Calculator -->
-<div class="card">
-<h2>🤖 Smart AI Calculator</h2>
-
-<p>Team A Avg Goals:</p>
-<input type="number" id="a_goals" step="0.1">
-
-<p>Team B Avg Goals:</p>
-<input type="number" id="b_goals" step="0.1">
-
-<p>Team A Defense (Goals conceded avg):</p>
-<input type="number" id="a_def" step="0.1">
-
-<p>Team B Defense (Goals conceded avg):</p>
-<input type="number" id="b_def" step="0.1">
-
-<button class="vip" onclick="calculate()">Calculate Prediction</button>
-
-<div id="result" class="hidden">
-<h3>📊 AI Result:</h3>
-<p id="prediction"></p>
-<p id="confidence"></p>
-</div>
-
-</div>
-
-<!-- 3️⃣ Live Matches Section -->
-<div class="card">
-<h2>⚽ Live Matches (Preview)</h2>
-<p>Real Madrid vs Barcelona</p>
-<p>Bayern Munich vs Dortmund</p>
-<p>PSG vs Marseille</p>
-<p style="color:gray;">(API integration coming soon)</p>
-</div>
-
-</div>
-
 <script>
-function calculate(){
+async function calculate(){
+
     let a_goals = parseFloat(document.getElementById("a_goals").value);
     let b_goals = parseFloat(document.getElementById("b_goals").value);
     let a_def = parseFloat(document.getElementById("a_def").value);
@@ -121,26 +11,29 @@ function calculate(){
         return;
     }
 
-    let attackStrength = (a_goals + b_goals) / 2;
-    let defenseWeakness = (a_def + b_def) / 2;
-    let scoreIndex = attackStrength - defenseWeakness;
+    try {
 
-    let predictionText = "";
-    let confidenceScore = Math.min(95, Math.max(55, Math.round((scoreIndex * 20) + 60)));
+        const response = await fetch("/api/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                a_goals,
+                b_goals,
+                a_def,
+                b_def
+            })
+        });
 
-    if(scoreIndex > 1){
-        predictionText = "Over 2.5 Goals 🔥";
-    } else if(scoreIndex > 0){
-        predictionText = "Both Teams To Score ✅";
-    } else {
-        predictionText = "Under 2.5 Goals ⚠️";
+        const data = await response.json();
+
+        document.getElementById("prediction").innerText = "Prediction: " + data.prediction;
+        document.getElementById("confidence").innerText = "Confidence: " + data.confidence + "%";
+        document.getElementById("result").classList.remove("hidden");
+
+    } catch (error) {
+        alert("Server error");
     }
-
-    document.getElementById("prediction").innerText = "Prediction: " + predictionText;
-    document.getElementById("confidence").innerText = "Confidence: " + confidenceScore + "%";
-    document.getElementById("result").classList.remove("hidden");
 }
 </script>
-
-</body>
-</html>
