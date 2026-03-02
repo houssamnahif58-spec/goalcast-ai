@@ -1,52 +1,32 @@
-function factorial(n) {
-  if (n === 0) return 1;
-  return n * factorial(n - 1);
-}
-
-function poisson(lambda, k) {
-  return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
-}
-
 export default function handler(req, res) {
-  if (req.method !== "POST") {
+
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { teamA_attack, teamB_attack, teamA_defense, teamB_defense } = req.body;
+  const { a_goals, b_goals, a_def, b_def } = req.body;
 
-  const lambdaA = (teamA_attack + teamB_defense) / 2;
-  const lambdaB = (teamB_attack + teamA_defense) / 2;
-
-  let probabilities = [];
-  let winA = 0;
-  let winB = 0;
-  let draw = 0;
-  let btts = 0;
-  let over25 = 0;
-
-  for (let i = 0; i <= 4; i++) {
-    for (let j = 0; j <= 4; j++) {
-      const prob = poisson(lambdaA, i) * poisson(lambdaB, j);
-      probabilities.push({ score: `${i}-${j}`, probability: prob });
-
-      if (i > j) winA += prob;
-      if (j > i) winB += prob;
-      if (i === j) draw += prob;
-      if (i > 0 && j > 0) btts += prob;
-      if (i + j > 2) over25 += prob;
-    }
+  if (!a_goals || !b_goals || !a_def || !b_def) {
+    return res.status(400).json({ error: "Missing data" });
   }
 
-  probabilities.sort((a, b) => b.probability - a.probability);
+  const attackStrength = (a_goals + b_goals) / 2;
+  const defenseWeakness = (a_def + b_def) / 2;
+  const scoreIndex = attackStrength - defenseWeakness;
+
+  let prediction = "";
+  let confidence = Math.min(95, Math.max(50, Math.round(scoreIndex * 50)));
+
+  if (scoreIndex > 1) {
+    prediction = "Over 2.5 Goals";
+  } else if (scoreIndex > 0) {
+    prediction = "Both Teams To Score";
+  } else {
+    prediction = "Under 2.5 Goals";
+  }
 
   return res.status(200).json({
-    exactScore: probabilities[0],
-    winProbability: {
-      teamA: (winA * 100).toFixed(2),
-      draw: (draw * 100).toFixed(2),
-      teamB: (winB * 100).toFixed(2),
-    },
-    btts: (btts * 100).toFixed(2),
-    over25: (over25 * 100).toFixed(2),
+    prediction,
+    confidence
   });
 }
