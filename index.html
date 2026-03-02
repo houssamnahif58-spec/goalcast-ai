@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoalCast AI - Smart Football Predictions</title>
+<title>GoalCast AI</title>
+
 <style>
 body{
 margin:0;
@@ -12,19 +13,29 @@ background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 text-align:center;
 }
+
 header{
-padding:40px 20px;
+padding:30px;
 }
-h1{
-font-size:40px;
-margin:0;
+
+button{
+background:#00ffcc;
+border:none;
+padding:12px 25px;
+border-radius:25px;
+cursor:pointer;
+margin:10px;
+font-size:16px;
 }
-p{
-opacity:0.8;
+
+button:hover{
+background:#00ccaa;
 }
+
 .container{
-margin-top:30px;
+margin-top:40px;
 }
+
 .card{
 background:rgba(255,255,255,0.1);
 padding:20px;
@@ -32,54 +43,135 @@ margin:20px auto;
 width:90%;
 max-width:500px;
 border-radius:15px;
-backdrop-filter:blur(10px);
 }
-button{
-background:#00ffcc;
+
+input{
+padding:10px;
+margin:10px;
+width:200px;
+border-radius:10px;
 border:none;
-padding:15px 30px;
-border-radius:30px;
-font-size:18px;
-cursor:pointer;
-margin-top:15px;
 }
-button:hover{
-background:#00ccaa;
-}
-footer{
-margin-top:40px;
-padding:20px;
-font-size:14px;
-opacity:0.6;
+
+.hidden{
+display:none;
 }
 </style>
 </head>
+
 <body>
 
 <header>
 <h1>⚽ GoalCast AI</h1>
-<p>Advanced AI Football Predictions Platform</p>
+<p id="subtitle">Advanced AI Football Predictions</p>
+<button onclick="setLang('en')">English</button>
+<button onclick="setLang('ar')">العربية</button>
 </header>
 
-<div class="container">
-
+<div id="home" class="container">
 <div class="card">
-<h2>🔥 Today Premium Match</h2>
+<h2 id="welcome">Welcome</h2>
+<button onclick="showLogin()">Login</button>
+<button onclick="showRegister()">Register</button>
+</div>
+</div>
+
+<div id="login" class="container hidden">
+<div class="card">
+<h2 id="loginTitle">Login</h2>
+<input type="text" id="loginUser" placeholder="Username"><br>
+<input type="password" id="loginPass" placeholder="Password"><br>
+<button onclick="login()">Login</button>
+<button onclick="goHome()">Back</button>
+</div>
+</div>
+
+<div id="register" class="container hidden">
+<div class="card">
+<h2 id="registerTitle">Register</h2>
+<input type="text" id="regUser" placeholder="Username"><br>
+<input type="password" id="regPass" placeholder="Password"><br>
+<button onclick="register()">Create Account</button>
+<button onclick="goHome()">Back</button>
+</div>
+</div>
+
+<div id="dashboard" class="container hidden">
+<div class="card">
+<h2 id="dashTitle">Premium Prediction</h2>
 <p>Manchester City vs Real Madrid</p>
 <p>AI Confidence: 87%</p>
-<button>Unlock Prediction</button>
+<button onclick="logout()">Logout</button>
+</div>
 </div>
 
-<div class="card">
-<h2>📊 AI Accuracy</h2>
-<p>Last 30 Days Accuracy: 91%</p>
-</div>
+<script>
 
-</div>
+function setLang(lang){
+if(lang==="ar"){
+document.getElementById("subtitle").innerText="منصة توقعات كرة القدم بالذكاء الاصطناعي";
+document.getElementById("welcome").innerText="مرحباً";
+document.getElementById("loginTitle").innerText="تسجيل الدخول";
+document.getElementById("registerTitle").innerText="إنشاء حساب";
+document.getElementById("dashTitle").innerText="توقع خاص للأعضاء";
+}
+else{
+document.getElementById("subtitle").innerText="Advanced AI Football Predictions";
+document.getElementById("welcome").innerText="Welcome";
+document.getElementById("loginTitle").innerText="Login";
+document.getElementById("registerTitle").innerText="Register";
+document.getElementById("dashTitle").innerText="Premium Prediction";
+}
+}
 
-<footer>
-© 2026 GoalCast AI - All Rights Reserved
-</footer>
+function showLogin(){
+hideAll();
+document.getElementById("login").classList.remove("hidden");
+}
+
+function showRegister(){
+hideAll();
+document.getElementById("register").classList.remove("hidden");
+}
+
+function goHome(){
+hideAll();
+document.getElementById("home").classList.remove("hidden");
+}
+
+function hideAll(){
+document.getElementById("home").classList.add("hidden");
+document.getElementById("login").classList.add("hidden");
+document.getElementById("register").classList.add("hidden");
+document.getElementById("dashboard").classList.add("hidden");
+}
+
+function register(){
+let user=document.getElementById("regUser").value;
+let pass=document.getElementById("regPass").value;
+localStorage.setItem("gc_user",user);
+localStorage.setItem("gc_pass",pass);
+alert("Account Created!");
+goHome();
+}
+
+function login(){
+let user=document.getElementById("loginUser").value;
+let pass=document.getElementById("loginPass").value;
+if(user===localStorage.getItem("gc_user") && pass===localStorage.getItem("gc_pass")){
+hideAll();
+document.getElementById("dashboard").classList.remove("hidden");
+}
+else{
+alert("Wrong credentials");
+}
+}
+
+function logout(){
+goHome();
+}
+
+</script>
 
 </body>
 </html>
