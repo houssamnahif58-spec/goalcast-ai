@@ -30,18 +30,17 @@
           b_def: parseFloat(document.getElementById("b_def").value)
         })
       })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("result").innerHTML =
-          "Prediction: " + data.prediction +
-          "<br>Confidence: " + data.confidence + "%";
-      })
-      .catch(() => {
-        document.getElementById("result").innerHTML =
-          "Error connecting to server";
-      });
-    }
-  </script>
-
-</body>
-</html>
+   .then(res => res.json())
+.then(data => {
+  document.getElementById("result").innerHTML = `
+    🎯 Exact Score: ${data.exactScore} <br><br>
+    📊 Team A Win: ${data.winA}% <br>
+    🤝 Draw: ${data.draw}% <br>
+    📊 Team B Win: ${data.winB}% <br><br>
+    🔥 BTTS: ${data.btts}% <br>
+    ⚽ Over 2.5: ${data.over25}%
+  `;
+})
+.catch(error => {
+  document.getElementById("result").innerHTML = "Error loading prediction";
+});
