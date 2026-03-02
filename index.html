@@ -1,176 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoalCast AI</title>
-
+<title>GoalCast AI - VIP Predictions</title>
 <style>
 body{
-margin:0;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:white;
-text-align:center;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+    text-align:center;
 }
-
 header{
-padding:30px;
+    padding:20px;
+    background:#111827;
 }
-
-button{
-background:#00ffcc;
-border:none;
-padding:12px 25px;
-border-radius:25px;
-cursor:pointer;
-margin:10px;
-font-size:16px;
+h1{
+    color:#22c55e;
 }
-
-button:hover{
-background:#00ccaa;
-}
-
 .container{
-margin-top:40px;
+    padding:30px;
 }
-
-.card{
-background:rgba(255,255,255,0.1);
-padding:20px;
-margin:20px auto;
-width:90%;
-max-width:500px;
-border-radius:15px;
+button{
+    padding:15px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:20px;
 }
-
-input{
-padding:10px;
-margin:10px;
-width:200px;
-border-radius:10px;
-border:none;
+.vip{
+    background:#22c55e;
+    color:black;
 }
-
 .hidden{
-display:none;
+    display:none;
+}
+.card{
+    background:#1e293b;
+    padding:20px;
+    border-radius:10px;
+    margin:20px auto;
+    width:90%;
+    max-width:500px;
 }
 </style>
 </head>
-
 <body>
 
 <header>
-<h1>⚽ GoalCast AI</h1>
-<p id="subtitle">Advanced AI Football Predictions</p>
-<button onclick="setLang('en')">English</button>
-<button onclick="setLang('ar')">العربية</button>
+<h1>GoalCast AI</h1>
+<p>Premium Football Predictions</p>
 </header>
 
-<div id="home" class="container">
+<div class="container">
+
 <div class="card">
-<h2 id="welcome">Welcome</h2>
-<button onclick="showLogin()">Login</button>
-<button onclick="showRegister()">Register</button>
-</div>
+<h2>🔥 VIP Subscription</h2>
+<p>احصل على توقعات احترافية يومياً</p>
+<p>Get daily professional predictions</p>
+<h3>149 DH / Month</h3>
+<button class="vip" onclick="showPayment()">اشترك الآن | Subscribe Now</button>
 </div>
 
-<div id="login" class="container hidden">
-<div class="card">
-<h2 id="loginTitle">Login</h2>
-<input type="text" id="loginUser" placeholder="Username"><br>
-<input type="password" id="loginPass" placeholder="Password"><br>
-<button onclick="login()">Login</button>
-<button onclick="goHome()">Back</button>
-</div>
+<div id="payment" class="hidden card">
+<h3>طريقة الاشتراك</h3>
+<p>أرسل 149 درهم عبر CashPlus أو Wafacash</p>
+<p>ثم راسلنا على واتساب لتفعيل حسابك</p>
+
+<a href="https://wa.me/212775165899" target="_blank">
+<button class="vip">راسلنا على واتساب</button>
+</a>
 </div>
 
-<div id="register" class="container hidden">
 <div class="card">
-<h2 id="registerTitle">Register</h2>
-<input type="text" id="regUser" placeholder="Username"><br>
-<input type="password" id="regPass" placeholder="Password"><br>
-<button onclick="register()">Create Account</button>
-<button onclick="goHome()">Back</button>
-</div>
+<h2>🔒 VIP Predictions Preview</h2>
+<p>Manchester City vs Liverpool</p>
+<p>Prediction: Over 2.5 Goals ✅</p>
+<p>Confidence: 87%</p>
 </div>
 
-<div id="dashboard" class="container hidden">
-<div class="card">
-<h2 id="dashTitle">Premium Prediction</h2>
-<p>Manchester City vs Real Madrid</p>
-<p>AI Confidence: 87%</p>
-<button onclick="logout()">Logout</button>
-</div>
 </div>
 
 <script>
-
-function setLang(lang){
-if(lang==="ar"){
-document.getElementById("subtitle").innerText="منصة توقعات كرة القدم بالذكاء الاصطناعي";
-document.getElementById("welcome").innerText="مرحباً";
-document.getElementById("loginTitle").innerText="تسجيل الدخول";
-document.getElementById("registerTitle").innerText="إنشاء حساب";
-document.getElementById("dashTitle").innerText="توقع خاص للأعضاء";
+function showPayment(){
+    document.getElementById("payment").classList.remove("hidden");
 }
-else{
-document.getElementById("subtitle").innerText="Advanced AI Football Predictions";
-document.getElementById("welcome").innerText="Welcome";
-document.getElementById("loginTitle").innerText="Login";
-document.getElementById("registerTitle").innerText="Register";
-document.getElementById("dashTitle").innerText="Premium Prediction";
-}
-}
-
-function showLogin(){
-hideAll();
-document.getElementById("login").classList.remove("hidden");
-}
-
-function showRegister(){
-hideAll();
-document.getElementById("register").classList.remove("hidden");
-}
-
-function goHome(){
-hideAll();
-document.getElementById("home").classList.remove("hidden");
-}
-
-function hideAll(){
-document.getElementById("home").classList.add("hidden");
-document.getElementById("login").classList.add("hidden");
-document.getElementById("register").classList.add("hidden");
-document.getElementById("dashboard").classList.add("hidden");
-}
-
-function register(){
-let user=document.getElementById("regUser").value;
-let pass=document.getElementById("regPass").value;
-localStorage.setItem("gc_user",user);
-localStorage.setItem("gc_pass",pass);
-alert("Account Created!");
-goHome();
-}
-
-function login(){
-let user=document.getElementById("loginUser").value;
-let pass=document.getElementById("loginPass").value;
-if(user===localStorage.getItem("gc_user") && pass===localStorage.getItem("gc_pass")){
-hideAll();
-document.getElementById("dashboard").classList.remove("hidden");
-}
-else{
-alert("Wrong credentials");
-}
-}
-
-function logout(){
-goHome();
-}
-
 </script>
 
 </body>
