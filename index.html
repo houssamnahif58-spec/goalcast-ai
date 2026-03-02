@@ -1,22 +1,47 @@
-fetch("/api/predict", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    a_goals: parseFloat(document.getElementById("a_goals").value),
-    b_goals: parseFloat(document.getElementById("b_goals").value),
-    a_def: parseFloat(document.getElementById("a_def").value),
-    b_def: parseFloat(document.getElementById("b_def").value)
-  })
-})
-.then(res => res.json())
-.then(data => {
-  document.getElementById("result").innerHTML =
-    "Prediction: " + data.prediction +
-    "<br>Confidence: " + data.confidence + "%";
-})
-.catch(err => {
-  document.getElementById("result").innerHTML =
-    "Error connecting to server";
-});
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GoalCast AI</title>
+</head>
+<body>
+
+  <h2>Goal Prediction</h2>
+
+  <input id="a_goals" placeholder="Team A Goals Avg"><br><br>
+  <input id="b_goals" placeholder="Team B Goals Avg"><br><br>
+  <input id="a_def" placeholder="Team A Defense Avg"><br><br>
+  <input id="b_def" placeholder="Team B Defense Avg"><br><br>
+
+  <button onclick="predict()">Predict</button>
+
+  <h3 id="result"></h3>
+
+  <script>
+    function predict() {
+      fetch("/api/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          a_goals: parseFloat(document.getElementById("a_goals").value),
+          b_goals: parseFloat(document.getElementById("b_goals").value),
+          a_def: parseFloat(document.getElementById("a_def").value),
+          b_def: parseFloat(document.getElementById("b_def").value)
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("result").innerHTML =
+          "Prediction: " + data.prediction +
+          "<br>Confidence: " + data.confidence + "%";
+      })
+      .catch(() => {
+        document.getElementById("result").innerHTML =
+          "Error connecting to server";
+      });
+    }
+  </script>
+
+</body>
+</html>
