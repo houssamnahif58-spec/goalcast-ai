@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>GoalCast AI</title>
+<style>
+body{
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    font-family: Arial;
+    text-align:center;
+    color:white;
+}
+.container{
+    margin-top:50px;
+}
+input{
+    padding:12px;
+    margin:8px;
+    border-radius:8px;
+    border:none;
+    width:200px;
+}
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    background:#00c6ff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+button:hover{
+    background:#0072ff;
+}
+.result{
+    margin-top:30px;
+    background:rgba(255,255,255,0.1);
+    padding:20px;
+    border-radius:15px;
+    display:inline-block;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>⚽ GoalCast AI</h1>
+
+<input type="number" id="teamA_attack" placeholder="Team A Attack Avg">
+<input type="number" id="teamB_attack" placeholder="Team B Attack Avg"><br>
+
+<input type="number" id="teamA_defense" placeholder="Team A Defense Avg">
+<input type="number" id="teamB_defense" placeholder="Team B Defense Avg"><br>
+
+<button onclick="predict()">Predict</button>
+
+<div class="result" id="output"></div>
+</div>
+
+<script>
+function predict(){
+
+let aAttack = parseFloat(document.getElementById("teamA_attack").value);
+let bAttack = parseFloat(document.getElementById("teamB_attack").value);
+let aDefense = parseFloat(document.getElementById("teamA_defense").value);
+let bDefense = parseFloat(document.getElementById("teamB_defense").value);
+
+let teamAGoals = (aAttack + bDefense)/2;
+let teamBGoals = (bAttack + aDefense)/2;
+
+let exactScore = Math.round(teamAGoals) + " - " + Math.round(teamBGoals);
+
+let winA = Math.max(0, (teamAGoals - teamBGoals + 1) * 40);
+let draw = 100 - Math.abs(winA - 50);
+let btts = (teamAGoals > 0.8 && teamBGoals > 0.8) ? 65 : 40;
+let over25 = (teamAGoals + teamBGoals > 2.5) ? 70 : 45;
+
+document.getElementById("output").innerHTML = `
+<h2>🎯 Exact Score: ${exactScore}</h2>
+<h3>📊 Win %: ${winA.toFixed(0)}%</h3>
+<h3>🤝 Draw %: ${draw.toFixed(0)}%</h3>
+<h3>🔥 BTTS %: ${btts}%</h3>
+<h3>⚽ Over 2.5 %: ${over25}%</h3>
+`;
+
+}
+</script>
+
+</body>
+</html>
