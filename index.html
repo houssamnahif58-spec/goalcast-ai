@@ -12,24 +12,18 @@ body{
     text-align:center;
     padding:40px;
 }
-input{
+select, button{
     padding:10px;
     margin:10px;
-    width:200px;
+    width:220px;
     border-radius:8px;
     border:none;
 }
 button{
-    padding:12px 25px;
     background:#22c55e;
     color:white;
-    border:none;
-    border-radius:10px;
     font-size:16px;
     cursor:pointer;
-}
-button:hover{
-    background:#16a34a;
 }
 #result{
     margin-top:30px;
@@ -44,32 +38,67 @@ button:hover{
 <body>
 
 <h1>⚽ GoalCast AI</h1>
-<h3>Exact Score Prediction Model</h3>
+<h3>Select Match</h3>
 
-<input id="teamA" type="number" step="0.1" placeholder="Team A Goals Avg">
-<br>
-<input id="teamB" type="number" step="0.1" placeholder="Team B Goals Avg">
-<br>
+<select id="matchSelect">
+<option value="arsenal-chelsea">Arsenal vs Chelsea</option>
+<option value="madrid-barcelona">Real Madrid vs Barcelona</option>
+<option value="psg-marseille">PSG vs Marseille</option>
+</select>
 
-<button onclick="predict()">Predict</button>
+<br>
+<button onclick="predict()">Predict Automatically</button>
 
 <div id="result"></div>
 
 <script>
 
+// قاعدة بيانات بسيطة
+const data = {
+"arsenal-chelsea": {home:1.8, away:1.4},
+"madrid-barcelona": {home:2.1, away:1.9},
+"psg-marseille": {home:2.3, away:1.2}
+};
+
 function factorial(n){
-    if(n===0) return 1;
-    return n*factorial(n-1);
+if(n===0) return 1;
+return n*factorial(n-1);
 }
 
 function poisson(lambda,k){
-    return (Math.pow(lambda,k)*Math.exp(-lambda))/factorial(k);
+return (Math.pow(lambda,k)*Math.exp(-lambda))/factorial(k);
 }
 
 function predict(){
 
-let teamA = parseFloat(document.getElementById("teamA").value);
-let teamB = parseFloat(document.getElementById("teamB").value);
+let match = document.getElementById("matchSelect").value;
 
-if(isNaN(teamA) || isNaN(teamB)){
-    alert("Enter both
+let teamA = data[match].home;
+let teamB = data[match].away;
+
+let scores=[];
+
+for(let i=0;i<=5;i++){
+for(let j=0;j<=5;j++){
+let prob = poisson(teamA,i)*poisson(teamB,j);
+scores.push({score:i+"-"+j, prob:prob});
+}
+}
+
+scores.sort((a,b)=>b.prob-a.prob);
+
+let top1=scores[0];
+let top2=scores[1];
+let top3=scores[2];
+
+document.getElementById("result").innerHTML=
+"🥇 "+top1.score+" ("+(top1.prob*100).toFixed(2)+"%)<br>"+
+"🥈 "+top2.score+" ("+(top2.prob*100).toFixed(2)+"%)<br>"+
+"🥉 "+top3.score+" ("+(top3.prob*100).toFixed(2)+"%)";
+
+}
+
+</script>
+
+</body>
+</html>
