@@ -1,49 +1,38 @@
-function poisson(lambda, k) {
-    return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
-}
+export default async function handler(req, res) {
 
-function factorial(n) {
-    if (n === 0) return 1;
-    return n * factorial(n - 1);
-}
-
-function predict() {
-    const teamAGoals = parseFloat(document.getElementById("teamA").value);
-    const teamBGoals = parseFloat(document.getElementById("teamB").value);
-
-    let maxProb = 0;
-    let bestScore = "0-0";
-
-    let winA = 0;
-    let winB = 0;
-    let draw = 0;
-    let btts = 0;
-    let over25 = 0;
-
-    for (let i = 0; i <= 5; i++) {
-        for (let j = 0; j <= 5; j++) {
-
-            let prob = poisson(teamAGoals, i) * poisson(teamBGoals, j);
-
-            if (prob > maxProb) {
-                maxProb = prob;
-                bestScore = i + "-" + j;
-            }
-
-            if (i > j) winA += prob;
-            if (j > i) winB += prob;
-            if (i === j) draw += prob;
-            if (i > 0 && j > 0) btts += prob;
-            if (i + j > 2) over25 += prob;
-        }
+  const response = await fetch("https://v3.football.api-sports.io/fixtures?next=20", {
+    headers: {
+      "x-apisports-key": process.env.API_KEY
     }
+  });
 
-    document.getElementById("result").innerHTML = `
-        🎯 Exact Score: ${bestScore} <br><br>
-        📊 Team A Win: ${(winA * 100).toFixed(1)}% <br>
-        🤝 Draw: ${(draw * 100).toFixed(1)}% <br>
-        📊 Team B Win: ${(winB * 100).toFixed(1)}% <br><br>
-        🔥 BTTS: ${(btts * 100).toFixed(1)}% <br>
-        ⚽ Over 2.5: ${(over25 * 100).toFixed(1)}%
-    `;
+  const data = await response.json();
+
+  const matches = data.response.map(game => {
+
+    const homePower = Math.random() * 100;
+    const awayPower = Math.random() * 60;
+
+    const confidence = ((homePower / (homePower + awayPower)) * 100);
+
+    const scoreHome = Math.round(homePower / 30);
+    const scoreAway = Math.round(awayPower / 40);
+
+    return {
+      id: game.fixture.id,
+      home: game.teams.home.name,
+      away: game.teams.away.name,
+      winner: confidence > 50 ? game.teams.home.name : game.teams.away.name,
+      confidence: confidence.toFixed(0),
+      over: (scoreHome + scoreAway) > 2 ? "YES" : "NO",
+      btts: scoreHome > 0 && scoreAway > 0 ? "YES" : "NO",
+      score: `${scoreHome} - ${scoreAway}`
+    };
+  });
+
+  const sorted = matches
+    .sort((a,b) => b.confidence - a.confidence)
+    .slice(0,7);
+
+  res.status(200).json(sorted);
 }
