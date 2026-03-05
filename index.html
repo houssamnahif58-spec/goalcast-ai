@@ -1,104 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>GoalCast AI</title>
+import { useEffect, useState } from "react";
 
-<style>
-body{
-    font-family: Arial;
-    background:#0f172a;
-    color:white;
-    text-align:center;
-    padding:40px;
+export default function Home() {
+  const [matches, setMatches] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/predictions")
+      .then(res => res.json())
+      .then(data => setMatches(data));
+  }, []);
+
+  return (
+    <div style={{background:"#0d0d0d",color:"#fff",padding:"20px"}}>
+      <h1 style={{color:"gold"}}>🌍 Global SureWin AI</h1>
+
+      {matches.map(match => (
+        <div key={match.id}
+          style={{
+            border:"1px solid gold",
+            padding:"15px",
+            marginBottom:"20px",
+            borderRadius:"10px"
+          }}>
+
+          <h3>{match.home} vs {match.away}</h3>
+
+          <p>🏆 Winner: {match.winner}</p>
+          <p>📊 Confidence: {match.confidence}%</p>
+          <p>🎯 Over 2.5: {match.over}</p>
+          <p>🤝 BTTS: {match.btts}</p>
+          <p>🔥 Score Exact: {match.score}</p>
+
+          <span style={{color:"#00ff88"}}>HIGH CONFIDENCE</span>
+
+        </div>
+      ))}
+    </div>
+  );
 }
-select, button{
-    padding:10px;
-    margin:10px;
-    width:220px;
-    border-radius:8px;
-    border:none;
-}
-button{
-    background:#22c55e;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-#result{
-    margin-top:30px;
-    font-size:18px;
-    background:#1e293b;
-    padding:20px;
-    border-radius:12px;
-}
-</style>
-</head>
-
-<body>
-
-<h1>⚽ GoalCast AI</h1>
-<h3>Select Match</h3>
-
-<select id="matchSelect">
-<option value="arsenal-chelsea">Arsenal vs Chelsea</option>
-<option value="madrid-barcelona">Real Madrid vs Barcelona</option>
-<option value="psg-marseille">PSG vs Marseille</option>
-</select>
-
-<br>
-<button onclick="predict()">Predict Automatically</button>
-
-<div id="result"></div>
-
-<script>
-
-// قاعدة بيانات بسيطة
-const data = {
-"arsenal-chelsea": {home:1.8, away:1.4},
-"madrid-barcelona": {home:2.1, away:1.9},
-"psg-marseille": {home:2.3, away:1.2}
-};
-
-function factorial(n){
-if(n===0) return 1;
-return n*factorial(n-1);
-}
-
-function poisson(lambda,k){
-return (Math.pow(lambda,k)*Math.exp(-lambda))/factorial(k);
-}
-
-function predict(){
-
-let match = document.getElementById("matchSelect").value;
-
-let teamA = data[match].home;
-let teamB = data[match].away;
-
-let scores=[];
-
-for(let i=0;i<=5;i++){
-for(let j=0;j<=5;j++){
-let prob = poisson(teamA,i)*poisson(teamB,j);
-scores.push({score:i+"-"+j, prob:prob});
-}
-}
-
-scores.sort((a,b)=>b.prob-a.prob);
-
-let top1=scores[0];
-let top2=scores[1];
-let top3=scores[2];
-
-document.getElementById("result").innerHTML=
-"🥇 "+top1.score+" ("+(top1.prob*100).toFixed(2)+"%)<br>"+
-"🥈 "+top2.score+" ("+(top2.prob*100).toFixed(2)+"%)<br>"+
-"🥉 "+top3.score+" ("+(top3.prob*100).toFixed(2)+"%)";
-
-}
-
-</script>
-
-</body>
-</html>
